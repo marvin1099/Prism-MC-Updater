@@ -16,10 +16,10 @@ A simple python script that was just sitting on my drive,
 to have auto update profiles in MultiMC/Prism Launcher.  
 
 # Install
-Get it from here
-https://codeberg.org/marvin1099/MultiMC-LatestVer/releases
-Or from here
-https://github.com/marvin1099/MultiMC-LatestVer/releases
+Get it from here  
+https://codeberg.org/marvin1099/MultiMC-LatestVer/releases  
+Or from here  
+https://github.com/marvin1099/MultiMC-LatestVer/releases  
 
 # Run
 Install Python and MultiMC/Prism Launcher
