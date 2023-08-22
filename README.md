@@ -25,7 +25,7 @@ https://github.com/marvin1099/MultiMC-LatestVer/releases
 Install Python and MultiMC/Prism Launcher
 Make a Instance if you dont have one to use already.  
 Place the file in MultiMC/Prism Launcher Instance.  
-In this folder there shold also be a "mmc-pack.json"
+In this folder there shold also be a "mmc-pack.json".  
 If you want to use the newest snapshot and not newest release,  
 change the "uselatest" varrible from True to False.
 Next open MultiMC/Prism Launcher.  
