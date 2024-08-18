@@ -1,40 +1,41 @@
-# MultiMC-LatestVer Main 
-https://codeberg.org/marvin1099/MultiMC-LatestVer  
-https://codeberg.org/marvin1099/MultiMC-LatestVer#description  
-https://codeberg.org/marvin1099/MultiMC-LatestVer#install  
-https://codeberg.org/marvin1099/MultiMC-LatestVer#run  
+# Prism-MC-Updater
+## Description
+A simple Python script for automatically updating Minecraft profiles in MultiMC/Prism Launcher.  
+This script ensures your instance always runs the latest release or snapshot version of Minecraft.
 
+## Installation
+Download the script from one of the following sources:
 
-# MultiMC-LatestVer Backup
-https://github.com/marvin1099/MultiMC-LatestVer  
-https://github.com/marvin1099/MultiMC-LatestVer#description   
-https://github.com/marvin1099/MultiMC-LatestVer#install   
-https://github.com/marvin1099/MultiMC-LatestVer#run  
+- [Codeberg Releases](https://codeberg.org/marvin1099/MultiMC-LatestVer/releases)
+- [GitHub Releases](https://github.com/marvin1099/MultiMC-LatestVer/releases)
 
-# Description
-A simple python script that was just sitting on my drive,  
-to have auto update profiles in MultiMC/Prism Launcher.  
+## Requirements
+- Python installed on your system
+- MultiMC or Prism Launcher installed
 
-# Install
-Get it from here  
-https://codeberg.org/marvin1099/MultiMC-LatestVer/releases  
-Or from here  
-https://github.com/marvin1099/MultiMC-LatestVer/releases  
+## Setup
+1. Ensure you have a Minecraft instance created in MultiMC/Prism Launcher.
+2. Place the script in the root directory of your instance.  
+   This folder should also contain the `mmc-pack.json` file.
+3. By default, the script updates to the latest release version of Minecraft.  
+   If you prefer to use the latest snapshot,  
+   change the `USE_LATEST_RELEASE` variable in the script from `True` to `False`,  
+   or use the `snapshot` argument during execution.
 
-# Run
-Install Python and MultiMC/Prism Launcher
-Make a Instance if you dont have one to use already.  
-Place the file in MultiMC/Prism Launcher Instance.  
-In this folder there shold also be a "mmc-pack.json".  
-If you want to use the newest snapshot and not newest release,  
-change the "uselatest" varrible from True to False.
-Next open MultiMC/Prism Launcher.  
-Then open the Instance settings.  
-Go to the settins tab.  
-Next open the sub tab custom commands.  
-Then on Linux or Mac add 'python "$INST_DIR/UpTNewMineV.py' as a pre-launch command.  
-For Windows the line needs to be 'python "$INST_DIR\UpTNewMineV.py'.  
-Of corse do not type the ' sysbols in the box.
-At this point it shold all work and when you start the Instance,  
-it shold update to the newest version and start as usual.
+## Usage
+1. Open MultiMC/Prism Launcher.
+2. Navigate to the instance settings of the instance you wish to auto update.
+3. Go to the `Settings` tab, then open the `Custom Commands` sub-tab.
+4. Add the following command as a pre-launch command:
+   - **Linux/Mac:** `python "$INST_DIR/mc-update.py"`
+   - **Windows:** `python "$INST_DIR\\mc-update.py"`
+5. To update to the latest snapshot instead of the release,  
+   without changing the variable inside the script,  
+   add the word `snapshot` as argument:
+   - **Linux/Mac:** `python "$INST_DIR/mc-update.py" snapshot`
+   - **Windows:** `python "$INST_DIR\\mc-update.py" snapshot`
 
+## Running the Script
+After setup, every time you start the instance in MultiMC/Prism Launcher,  
+the script will automatically update Minecraft to the latest version,  
+for release or snapshot and launch the game as usual.
