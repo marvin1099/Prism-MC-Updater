@@ -48,15 +48,15 @@ It ensures your selected instance always launches the **latest release or snapsh
 
 * **Linux/macOS:**
 
-```bash
-python3 "$INST_DIR/mc-update.py"
-```
+    ```bash
+    python3 "$INST_DIR/mc-update.py"
+    ```
 
 * **Windows:**
 
-```cmd
-python "%INST_DIR%\\mc-update.py"
-```
+    ```cmd
+    python "%INST_DIR%\\mc-update.py"
+    ```
 
 Most of these commands are defined for **Linux/macOS**  
 If you are on **Windows** you will need to change them to fit the format above.
@@ -97,15 +97,15 @@ For legacy behavior (or when using **MultiMC** instead of PrismLauncher):
 
 * **Linux/macOS:**
 
-```bash
-python3 "$INST_DIR/mc-update.py"
-```
+    ```bash
+    python3 "$INST_DIR/mc-update.py"
+    ```
 
 * **Windows:**
 
-```cmd
-python "%INST_DIR%\\mc-update.py"
-```
+    ```cmd
+    python "%INST_DIR%\\mc-update.py"
+    ```
 
 #### Snapshot version:
 
@@ -142,17 +142,18 @@ python3 "$INST_DIR/mc-update.py" --snapshot
 
 ### What happens if I updated the game manually?
 
-Well it will say it's up to date and do close itself.
+Well it will say it's up to date and do close itself.  
 Afterwards the game should start as usual.
 
 ## Can I compile the script with PyInstaller?
 
-I did not test it.
+I did not test it.  
 You can try it it may work but no promises.
 
 ## What is the difference between wrapper and pre-command?
 
-Both the **wrapper** and **pre-command** options allow you to run custom scripts before launching Minecraft, but they serve slightly different purposes and are handled differently by **PrismLauncher** and **MultiMC**.
+Both the **wrapper** and **pre-command** options allow you to run custom scripts before launching Minecraft,  
+but they serve slightly different purposes and are handled differently by **PrismLauncher** and **MultiMC**.
 
 ### Pre-Command (Simple)
 
@@ -160,7 +161,7 @@ Both the **wrapper** and **pre-command** options allow you to run custom scripts
 * Executes your script *before* the launcher touches any game files or starts Minecraft.
 * Ideal for simple one-shot tasks like updating files or running quick checks.
 * **Works well in MultiMC**.
-* **⚠ In PrismLauncher, this may not work as expected**, because it applies config changes *after* the pre-command runs, potentially overwriting them.
+* **In PrismLauncher, this may not work as expected**, because it applies config changes *after* the pre-command runs, potentially overwriting them.
 
 ---
 
