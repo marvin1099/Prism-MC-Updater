@@ -142,13 +142,13 @@ python3 "$INST_DIR/mc-update.py" --snapshot
 
 ### What happens if I updated the game manually?
 
-Well it will say it's up to date and do close itself.  
+Well it will say it's up to date and close itself.  
 Afterwards the game should start as usual.
 
 ## Can I compile the script with PyInstaller?
 
 I did not test it.  
-You can try it it may work but no promises.
+You can try it, it may work but no promises.
 
 ## What is the difference between wrapper and pre-command?
 
