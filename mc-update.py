@@ -57,19 +57,33 @@ def load_mmc_config(config_path):
             time.sleep(2)
             sys.exit(1)
 
-def update_mmc_config(mmc_json, new_version, config_path):
+def save_mmc_config(config_path, mmc_json):
+    with open(config_path, 'w') as file:
+        json.dump(mmc_json, file, sort_keys=True, indent=4)
+
+def update_mmc_config(json_data, new_version):
     """Update the MultiMC / PrismLauncher configuration with the new version."""
-    current_version = mmc_json["components"][1]["version"]
+    components = mmc_json.get("components", [])
+
+    # Find the component with "uid": "net.minecraft"
+    mc_component = next((c for c in components if c.get("uid") == "net.minecraft"), None)
+
+    if not mc_component or "version" not in mc_component:
+        print("Could not find the Minecraft component in mmc-pack.json. Exiting...")
+        time.sleep(2)
+        sys.exit(1)
+
+    current_version = mc_component["version"]
 
     if current_version == new_version:
         print(f"MultiMC / PrismLauncher is already on the latest version: {new_version}")
         time.sleep(2)
         sys.exit(0)
     else:
-        mmc_json["components"][1]["version"] = new_version
-        with open(config_path, 'w') as file:
-            json.dump(mmc_json, file, sort_keys=True, indent=4, separators=(',', ': '))
+        mc_component["version"] = new_version
         print(f"Installed Version = {current_version}\nUpdated To Version = {new_version}")
+
+    return mmc_json
 
 def main():
     print("Downloading and reading Minecraft version manifest...")
@@ -85,14 +99,14 @@ def main():
     print("Loading MultiMC / PrismLauncher configuration...")
     mmc_json = load_mmc_config(MMC_CONFIG_PATH)
 
-    try:
-        current_version = mmc_json["components"][1]["version"]
-    except KeyError:
-        print("MultiMC / PrismLauncher configuration file is in an incorrect format. Please use another instance. Exiting...")
-        time.sleep(2)
-        sys.exit(1)
+    print("Updating configuration...")
+    mmc_json_data = update_mmc_config(json_data=mmc_json, new_version=selected_version)
 
-    update_mmc_config(mmc_json, new_version=selected_version, config_path=MMC_CONFIG_PATH)
+    if mmc_json != mmc_json_data:
+        print("Saving configuration...")
+        save_mmc_config(MMC_CONFIG_PATH, mmc_json_data)
+    else:
+        print("Configuration already on newest version...")
 
 if __name__ == "__main__":
     main()
