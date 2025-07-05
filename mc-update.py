@@ -63,6 +63,7 @@ def save_mmc_config(config_path, mmc_json):
 
 def update_mmc_config(json_data, new_version):
     """Update the MultiMC / PrismLauncher configuration with the new version."""
+    mmc_json = json_data
     components = mmc_json.get("components", [])
 
     # Find the component with "uid": "net.minecraft"
@@ -77,13 +78,11 @@ def update_mmc_config(json_data, new_version):
 
     if current_version == new_version:
         print(f"MultiMC / PrismLauncher is already on the latest version: {new_version}")
-        time.sleep(2)
-        sys.exit(0)
     else:
         mc_component["version"] = new_version
         print(f"Installed Version = {current_version}\nUpdated To Version = {new_version}")
 
-    return mmc_json
+    return current_version == new_version or mmc_json
 
 def main():
     print("Downloading and reading Minecraft version manifest...")
@@ -102,11 +101,11 @@ def main():
     print("Updating configuration...")
     mmc_json_data = update_mmc_config(json_data=mmc_json, new_version=selected_version)
 
-    if mmc_json != mmc_json_data:
+    if mmc_json_data == True:
+        print("Configuration already on newest version...")
+    else:
         print("Saving configuration...")
         save_mmc_config(MMC_CONFIG_PATH, mmc_json_data)
-    else:
-        print("Configuration already on newest version...")
 
 if __name__ == "__main__":
     main()
