@@ -150,7 +150,7 @@ def parse_args():
 
     subprocess_log = "--subprocess_log" in wrapper_args
 
-    if working_dir.name == ".minecraft" and not (working_dir / MMC_CONFIG_FILENAME).is_file():
+    if (working_dir.name == ".minecraft" or working_dir.name == "minecraft") and not (working_dir / MMC_CONFIG_FILENAME).is_file():
         working_dir = working_dir.parent
 
     return use_release, prism_path, working_dir, prism_args, subprocess_log
