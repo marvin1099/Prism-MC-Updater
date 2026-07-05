@@ -5,15 +5,17 @@ import os
 import subprocess
 import json
 import time
-import threading
 import shutil
 import urllib.request
 from pathlib import Path
 
 
 INTERNET_RETRY_DELAY = 20
-MC_VERSION_MANIFEST_URL = "https://launchermeta.mojang.com/mc/game/version_manifest.json"
+MC_VERSION_MANIFEST_URL = (
+    "https://launchermeta.mojang.com/mc/game/version_manifest.json"
+)
 MMC_CONFIG_FILENAME = "mmc-pack.json"
+
 
 def print_help():
     print(f"""A Minecraft Auto-Updater Wrapper Script for PrismLauncher Instances
@@ -51,28 +53,36 @@ Example with optirun and release specified:
 """)
     sys.exit(0)
 
+
 def split_wrapper_and_game_args(argv):
     java_names = [
-        "java", "java.exe",
-        "javaw", "javaw.exe",
-        "openjdk", "openjdk.exe",
-        "temurin", "temurin.exe",     # e.g. Eclipse Adoptium
-        "zulu", "zulu.exe",           # e.g. Azul Zulu
-        "graalvm", "graalvm.exe"      # advanced users
+        "java",
+        "java.exe",
+        "javaw",
+        "javaw.exe",
+        "openjdk",
+        "openjdk.exe",
+        "temurin",
+        "temurin.exe",  # e.g. Eclipse Adoptium
+        "zulu",
+        "zulu.exe",  # e.g. Azul Zulu
+        "graalvm",
+        "graalvm.exe",  # advanced users
     ]
 
     if "--end_up_wrapper" in argv:
         end_index = sys.argv.index("--end_up_wrapper")
         wrapper_args = sys.argv[1:end_index]
-        prism_args = sys.argv[end_index + 1:]
+        prism_args = sys.argv[end_index + 1 :]
         return wrapper_args, prism_args
     else:
         # Find first argument that looks like Java command
-        for i in range(len(argv)-1, -1, -1):
+        for i in range(len(argv) - 1, -1, -1):
             arg = Path(argv[i])
             if arg.name.lower() in java_names:
                 return argv[1:i], argv[i:]
         return argv[1:], []  # fallback if no Java found
+
 
 def parse_args():
     if "--help" in sys.argv:
@@ -84,14 +94,14 @@ def parse_args():
 
     # Known Prism/MultiMC launcher executables (Linux, Windows, macOS)
     prism_names = [
-        "prismlauncher",              # Linux / macOS CLI
+        "prismlauncher",  # Linux / macOS CLI
         "prism-launcher",
-        "prismlauncher.exe",          # Windows
+        "prismlauncher.exe",  # Windows
         "prism-launcher.exe",
-        "MultiMC",                    # Old MultiMC binary
+        "MultiMC",  # Old MultiMC binary
         "MultiMC.exe",
-        "multimc",                    # lowercase variants
-        "multimc.exe"
+        "multimc",  # lowercase variants
+        "multimc.exe",
     ]
 
     # If --prism_path is provided, try to resolve it first
@@ -99,8 +109,8 @@ def parse_args():
         idx = wrapper_args.index("--prism_path")
         try:
             given_path = wrapper_args[idx + 1]
-        except IndexError as e:
-            print(f"--prism_path requires a path")
+        except IndexError:
+            print("--prism_path requires a path")
             sys.exit(1)
         except Exception as e:
             print(f"Exiting as --prism_path has unknown error: {e}")
@@ -108,27 +118,32 @@ def parse_args():
 
         # Try full path first
         if Path(given_path).is_file() and os.access(given_path, os.X_OK):
-            return Path(given_path).resolve()
+            prism_path = Path(given_path).resolve()
         else:
-            resolved = Path(shutil.which(given_path)).resolve()
-            if resolved:
-                return resolved
+            which_result = shutil.which(given_path)
+            if which_result:
+                prism_path = Path(which_result).resolve()
             else:
                 print(f"The given path '{given_path}' could not be resolved.")
                 sys.exit(1)
+    else:
+        # Otherwise, search known names in PATH
+        prism_path = None
+        for name in prism_names:
+            which_result = shutil.which(name)
+            if which_result:
+                prism_path = Path(which_result).resolve()
+                break
 
-    # Otherwise, search known names in PATH
-    for name in prism_names:
-        resolved = Path(shutil.which(name)).resolve()
-        if resolved:
-            prism_path = resolved
-            break
-
-    if not prism_path:
-        print("App prismlauncher / multimc could not be found.")
-        print("The argument --prism_path will need to be set to the full path of prismlauncher / multimc.")
-        print("Eg. '\"{__file__}\" --prism_path \"/usr/bin/prismlauncher\" --snapshot'.")
-        sys.exit(1)
+        if not prism_path:
+            print("App prismlauncher / multimc could not be found.")
+            print(
+                "The argument --prism_path will need to be set to the full path of prismlauncher / multimc."
+            )
+            print(
+                'Eg. \'"{__file__}" --prism_path "/usr/bin/prismlauncher" --snapshot\'.'
+            )
+            sys.exit(1)
 
     working_dir = Path(os.getcwd())
 
@@ -150,10 +165,13 @@ def parse_args():
 
     subprocess_log = "--subprocess_log" in wrapper_args
 
-    if (working_dir.name == ".minecraft" or working_dir.name == "minecraft") and not (working_dir / MMC_CONFIG_FILENAME).is_file():
+    if (working_dir.name == ".minecraft" or working_dir.name == "minecraft") and not (
+        working_dir / MMC_CONFIG_FILENAME
+    ).is_file():
         working_dir = working_dir.parent
 
     return use_release, prism_path, working_dir, prism_args, subprocess_log
+
 
 def download_version_manifest(url, retries):
     retries = max(retries, 1)
@@ -171,6 +189,7 @@ def download_version_manifest(url, retries):
                 print(f"\nInternet missing. Retrying {retries + 1} more times...")
             time.sleep(1)
 
+
 def load_mmc_config(path):
     if not path.is_file():
         print(f"Missing config: {str(path)}")
@@ -182,12 +201,18 @@ def load_mmc_config(path):
             print("Invalid JSON in mmc-pack.json.")
             sys.exit(1)
 
+
 def save_mmc_config(path, data):
     with open(path, "w") as f:
         json.dump(data, f, indent=4, sort_keys=True)
 
+
 def get_mc_component(mmc_json):
-    return next((c for c in mmc_json.get("components", []) if c.get("uid") == "net.minecraft"), None)
+    return next(
+        (c for c in mmc_json.get("components", []) if c.get("uid") == "net.minecraft"),
+        None,
+    )
+
 
 def needs_update(instance_path, mcc_config, use_release):
     config_path = Path(instance_path, mcc_config)
@@ -199,8 +224,12 @@ def needs_update(instance_path, mcc_config, use_release):
         sys.exit(1)
 
     current_version = mc_component["version"]
-    manifest = download_version_manifest(MC_VERSION_MANIFEST_URL, retries=INTERNET_RETRY_DELAY)
-    target_version = manifest["latest"]["release"] if use_release else manifest["latest"]["snapshot"]
+    manifest = download_version_manifest(
+        MC_VERSION_MANIFEST_URL, retries=INTERNET_RETRY_DELAY
+    )
+    target_version = (
+        manifest["latest"]["release"] if use_release else manifest["latest"]["snapshot"]
+    )
 
     if current_version != target_version:
         print(f"Update needed: {current_version} → {target_version}")
@@ -209,7 +238,16 @@ def needs_update(instance_path, mcc_config, use_release):
         print(f"Up-to-date: {current_version}")
         return False, None, None, None
 
-def detach_and_relaunch(prism_path, instance_id, mmc_json, config_path, new_version, subprocess_log, timeout=5):
+
+def detach_and_relaunch(
+    prism_path,
+    instance_id,
+    mmc_json,
+    config_path,
+    new_version,
+    subprocess_log,
+    timeout=5,
+):
     print(f"Relaunching PrismLauncher with updated version in max {timeout}s...")
 
     # Serialize mmc_json and new_version to pass to the detached subprocess
@@ -220,7 +258,7 @@ ENABLE_LOG = {subprocess_log}
 LOG_PATH = {repr(str(config_path.parent / "wrapper_subprocess.log"))}
 CONFIG_PATH = {repr(str(config_path))}
 NEW_VERSION = {repr(new_version)}
-PRISM_CMD = { [str(prism_path), "--launch", instance_id]!r }
+PRISM_CMD = {[str(prism_path), "--launch", instance_id]!r}
 TIMEOUT = {timeout}
 
 if ENABLE_LOG and os.path.isfile(LOG_PATH):
@@ -296,7 +334,7 @@ log('Done.')
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
         stdin=subprocess.DEVNULL,
-        start_new_session=True  # Important: prevents signal propagation
+        start_new_session=True,  # Important: prevents signal propagation
     )
 
     time.sleep(0.1)
@@ -314,7 +352,9 @@ def main():
     print(f"Instance ID: {instance_id}")
     print(f"Checking for {'release' if use_release else 'snapshot'} updates...")
 
-    update_needed, mmc_json, config_path, new_version = needs_update(instance_path, MMC_CONFIG_FILENAME, use_release)
+    update_needed, mmc_json, config_path, new_version = needs_update(
+        instance_path, MMC_CONFIG_FILENAME, use_release
+    )
 
     if update_needed:
         if not prism_args:
@@ -326,14 +366,22 @@ def main():
             print()
             sys.exit(0)
         else:
-            detach_and_relaunch(prism_path, instance_id, mmc_json, config_path, new_version, subprocess_log)
+            detach_and_relaunch(
+                prism_path,
+                instance_id,
+                mmc_json,
+                config_path,
+                new_version,
+                subprocess_log,
+            )
     else:
         if prism_args:
-            print(f"Launching game...")
+            print("Launching game...")
             subprocess.run(prism_args)
         else:
             print("Manual launch detected. Exiting...")
         print()
+
 
 if __name__ == "__main__":
     main()
